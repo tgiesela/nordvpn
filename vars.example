@@ -1,0 +1,5 @@
+export DOCKERNETWORK=172.20.0.0/16
+export VPNIP=172.20.0.50 
+export DOCKERGATEWAY=172.20.0.1
+export LOCALNETWORKS='172.20.0.0/16;192.168.0.0/16'
+export SSHVOLUME=/path/to/sshdata
