@@ -1,4 +1,9 @@
+networks:
+  mailnet:
+    name: mailnet
+    external: true
+
 include:
   - nordvpn/docker-compose.yml
-  - spotweb/docker-compose.postgresql.yml
-  - mailserver/docker-compose.yml
+  - ../spotweb/docker-compose.postgresql.yml
+  - ../mailserver/docker-compose.yml

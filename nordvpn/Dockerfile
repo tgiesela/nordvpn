@@ -13,5 +13,6 @@ RUN apt-get update && \
 
 COPY --chmod=0755 scripts/init.sh /init.sh
 COPY --chmod=0755 scripts/forward.sh /forward.sh
+COPY --chmod=0755 scripts/healthy.sh /healthy.sh
 ENTRYPOINT ["/init.sh"]
 CMD ["app:start"]
