@@ -12,6 +12,7 @@ services:
         - 53:53/tcp
       cap_add:
          - NET_ADMIN
+      depends_on: [vpn]
       volumes:
         - ./dnsmasq.conf:/etc/dnsmasq.conf
       labels:
