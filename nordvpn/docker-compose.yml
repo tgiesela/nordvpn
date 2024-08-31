@@ -1,0 +1,75 @@
+x-logging:
+    &default-logging
+    driver: "json-file"
+    options:
+        max-size: "10m"
+        max-file: "3"
+
+services:
+  vpn:
+    image: tgiesela/nordvpn
+    build: .
+    container_name: nordvpn
+    hostname: nordvpn
+    networks:
+      mailnet:
+        ipv4_address: ${VPNIP}
+    environment:
+     - TZ=Europe/Amsterdam
+     - NETWORK=${LOCALNETWORKS}
+     - MESHROUTING=${MESHROUTING}
+     - MESHLOCAL=${MESHLOCAL}
+     - TOKEN=${TOKEN}
+     - DOCKERNETWORK=${DOCKERNETWORK}
+    cap_add:
+     - NET_ADMIN               # Required
+     - NET_RAW                 # Required    networks:
+    volumes:
+     - ${SPOTWEBVOLUME}/spotweb:/config
+    logging: *default-logging
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1  # 1: Recomended if using ipv4 only
+      - net.ipv4.conf.all.src_valid_mark=1
+    devices:
+      - /dev/net/tun
+    restart: unless-stopped
+    labels:
+      - "com.tgiesela.vpn.vpnserver=true"
+    healthcheck:
+      test: ["CMD", "/healthy.sh"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+#      start_interval: 5s
+
+  openssh-server:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: openssh-server
+    hostname: openssh-server 
+    networks: 
+      - mailnet
+    depends_on: [vpn]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Amsterdam
+      - SUDO_ACCESS=true 
+      - PASSWORD_ACCESS=true 
+      - USER_PASSWORD=${OPENSSHPASSWORD}
+      - USER_NAME=${OPENSSHUSER}
+      - LOG_STDOUT=true 
+    volumes:
+      - ${SSHVOLUME}/config:/config
+    ports:
+      - 2222:2222
+    restart: unless-stopped
+    labels:
+      - "com.tgiesela.vpn.accessible=true"
+      - "com.tgiesela.vpn.vpnport=2222"
+      - "com.tgiesela.vpn.containerport=2222"
+
+networks:
+  mailnet:
+    name: mailnet
+    external: true
