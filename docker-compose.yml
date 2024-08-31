@@ -6,5 +6,5 @@ networks:
 include:
   - nordvpn/docker-compose.yml
   - dnsmasq/docker-compose.yml
-  - ../spotweb/docker-compose.postgresql.yml
-  - ../mailserver/docker-compose.yml
+#  - ../spotweb/docker-compose.postgresql.yml
+#  - ../mailserver/docker-compose.yml
