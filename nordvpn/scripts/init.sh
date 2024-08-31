@@ -92,7 +92,7 @@ echo "AWAKE: DAEMON ACTIVE!!"
     config_mesh
     echo "LOGGED IN"
     nordvpn connect ${CONNECT}
-    echo 'nameserver 127.0.0.11' > /etc/resolv.conf
+#    echo 'nameserver 127.0.0.11' > /etc/resolv.conf
     echo "CONNECTED"
     nordvpn status
     delDNSrules

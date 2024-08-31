@@ -5,7 +5,7 @@ if [ -z "$CMD" ] ; then
     CMD=stop
 fi
 
-for dir in $(ls -d */) ;do
+for dir in $(ls -d ../*/ ./*/) ;do
 echo "Processing $dir"
    if [ -f "${dir}/docker-compose.yml" ] ; then
 echo "    $dir contains compose.yml"

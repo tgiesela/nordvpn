@@ -1,0 +1,6 @@
+no-resolv
+interface=eth0
+log-queries
+server=/exmample.local/192.168.0.1
+server=/.mailnet/127.0.0.11
+server=103.86.96.100

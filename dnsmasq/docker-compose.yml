@@ -1,0 +1,19 @@
+services:
+   dnsmasq:
+      image: tgiesela/dnsmasq:latest
+      build: .
+      hostname: dnsmasq
+      networks:
+        mailnet:
+          ipv4_address: ${DNSIP}
+      container_name: dnsmasq
+      ports: 
+        - 53:53/udp
+        - 53:53/tcp
+      cap_add:
+         - NET_ADMIN
+      volumes:
+        - ./dnsmasq.conf:/etc/dnsmasq.conf
+      labels:
+        - "com.tgiesela.vpn.hiddenip=true"
+

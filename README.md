@@ -27,6 +27,13 @@ The bash script will load all `vars` in the subfolders of this project and proce
 It will then run docker compose to build and start all the containers.
 When all containers are started, the labels set on all containers will be used to set the routing for the docker containers via the vpn docker container.
 
+## DNS
+By default, nordvpn sets its own DNS-servers. So a DNS lookup inside the nordvpn container will always use them.
+However, all other containers would use the docker DNS (127.0.0.11) and eventually use the DNS server set on the host machine.
+This is why I added a dnsmasq container which is able to split DNS requests for Docker containers, a local DNS-server and eventually the nordVPN servers.
+See dnsmasq/dnsmasq.conf for an example.
+If you are using container names inside docker container to connect to other containers, you need to suffix them with `.mailnet` which is the name of the docker network and will be used by dnsmasq to route them to the docker DNS.
+
 ## Notes
 You may have to update you docker compose .yml files to make them dependent on the vpn service.
 

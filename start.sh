@@ -15,16 +15,17 @@
 #       com.tgiesela.vpn.containerport=<port1>[;<port2>...] #required
 #          note: the order of ports has to be the same in both arrays, e.g. port1 is mapped to port1
 #
-for dir in $(ls -d ../*) ;do 
+for dir in $(ls -d ../*/ ./*/) ;do 
 echo "Processing $dir"
    if [ -f "${dir}/docker-compose.yml" ] ; then
 echo "    $dir contains compose.yml"
        if [ -f "${dir}/vars" ] ; then
-echo "    source vars from $dir"
+echo "    source vars from $dir/vars"
 	    source ${dir}/vars
        fi
    fi
 done
+
 docker network create --subnet ${DOCKERNETWORK} --gateway ${DOCKERGATEWAY} --ipv6 mailnet
 docker compose up --build -d
 # Now wait for the VPN servive to become ready

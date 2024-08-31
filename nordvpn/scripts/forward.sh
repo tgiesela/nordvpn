@@ -4,17 +4,19 @@
 #   1 port on which traffic comes in
 #   2 container/host which is the target
 #   3 target port
-
+cat /etc/resolv.conf
 SRCPORT=$1
 TARGET=$2
 DSTPORT=$3
 
-TARGETIP=$(dig +short ${TARGET})
+# Always use dockers DNS to resolve hostnames
+TARGETIP=$(dig +short @127.0.0.11 ${TARGET})
 if [ -z "$TARGETIP" ] ; then
     echo "Can't resolve hostname ${TARGET}"
     exit 2
 fi
-MYIP=$(dig +short $(hostname))
+# Always use dockers DNS to resolve hostnames
+MYIP=$(dig +short @127.0.0.11 $(hostname))
 echo "Adding port forwarding from :${SRCPORT} to ${TARGET}:${DSTPORT}"
 # To avoid duplicate delete old rules first
 set +e
