@@ -5,15 +5,5 @@ if [ -z "$CMD" ] ; then
     CMD=stop
 fi
 
-for dir in $(ls -d ../*/ ./*/) ;do
-echo "Processing $dir"
-   if [ -f "${dir}/docker-compose.yml" ] ; then
-echo "    $dir contains compose.yml"
-       if [ -f "${dir}/vars" ] ; then
-echo "    source vars from $dir"
-            source ${dir}/vars
-       fi
-   fi
-done
-
+source load_vars.sh
 docker compose $CMD

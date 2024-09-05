@@ -15,23 +15,30 @@
 #       com.tgiesela.vpn.containerport=<port1>[;<port2>...] #required
 #          note: the order of ports has to be the same in both arrays, e.g. port1 is mapped to port1
 #
-for dir in $(ls -d ../*/ ./*/) ;do 
-echo "Processing $dir"
-   if [ -f "${dir}/docker-compose.yml" ] ; then
-echo "    $dir contains compose.yml"
-       if [ -f "${dir}/vars" ] ; then
-echo "    source vars from $dir/vars"
-	    source ${dir}/vars
-       fi
-   fi
-done
+CMD=$1
+if [ -z "$CMD" ] ; then
+    echo "No option specified, assuming BUILD"
+    CMD=build
+fi
+case "$CMD" in
+    build|start) ;;
+    *)
+       echo "Illegal start option, should be one of 'build, start', found ${CMD}"
+       exit 1
+esac
+source load_vars.sh
 
-docker network create --subnet ${DOCKERNETWORK} --gateway ${DOCKERGATEWAY} --ipv6 mailnet
-docker compose up --build -d
+if [ "$CMD" == "build" ] ; then
+    docker network create --subnet ${DOCKERNETWORK} --gateway ${DOCKERGATEWAY} --ipv6 mailnet
+    docker compose --parallel 1 up --build -d 
+else
+    docker compose up -d
+fi
+
 # Now wait for the VPN servive to become ready
 STATUS=$(docker ps --format '{{.Status}}' -f name=nordvpn)
 echo $STATUS
-while [[ ! "${STATUS}" =~ "healthy" ]] ; do
+while [[ ! "${STATUS}" =~ "(healthy)" ]] ; do
    echo "Waiting for VPN to become ready"
    sleep 5
    STATUS=$(docker ps --format '{{.Status}}' -f name=nordvpn)

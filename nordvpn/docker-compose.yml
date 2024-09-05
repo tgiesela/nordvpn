@@ -32,7 +32,7 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     devices:
       - /dev/net/tun
-    restart: unless-stopped
+    restart: on-failure:5
     labels:
       - "com.tgiesela.vpn.vpnserver=true"
     healthcheck:
@@ -63,7 +63,7 @@ services:
       - ${SSHVOLUME}/config:/config
     ports:
       - 2222:2222
-    restart: unless-stopped
+    restart: on-failure:5
     labels:
       - "com.tgiesela.vpn.accessible=true"
       - "com.tgiesela.vpn.vpnport=2222"
