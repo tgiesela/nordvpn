@@ -20,8 +20,17 @@ MYIP=$(dig +short @127.0.0.11 $(hostname))
 echo "Adding port forwarding from :${SRCPORT} to ${TARGET}:${DSTPORT}"
 # To avoid duplicate delete old rules first
 set +e
-iptables -t nat -D PREROUTING -p tcp --dport ${SRCPORT} -j DNAT --to-destination ${TARGETIP}:${DSTPORT} > /dev/null 2>&1
-iptables -t nat -D POSTROUTING -p tcp -d ${TARGETIP} --dport ${DSTPORT} -j SNAT --to-source ${MYIP} > /dev/null 2>&1
+CURRULE=$(iptables -t nat -S PREROUTING | grep ${SRCPORT})
+if [ ! -z "$CURRULE" ] ; then
+    echo $CURRULE | sed 's/\-A /\-D /'| xargs iptables -t nat
+fi
+CURRULE=$(iptables -t nat -S POSTROUTING | grep ${DSTPORT})
+if [ ! -z "$CURRULE" ] ; then
+    echo $CURRULE | sed 's/\-A /\-D /'| xargs iptables -t nat
+fi
+
+#iptables -t nat -D PREROUTING -p tcp --dport ${SRCPORT} -j DNAT --to-destination ${TARGETIP}:${DSTPORT} > /dev/null 2>&1
+#iptables -t nat -D POSTROUTING -p tcp -d ${TARGETIP} --dport ${DSTPORT} -j SNAT --to-source ${MYIP} > /dev/null 2>&1
 # (Re-) add the rules
 set -e
 iptables -t nat -A PREROUTING -p tcp --dport ${SRCPORT} -j DNAT --to-destination ${TARGETIP}:${DSTPORT}
