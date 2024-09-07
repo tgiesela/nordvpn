@@ -15,6 +15,17 @@
 #       com.tgiesela.vpn.containerport=<port1>[;<port2>...] #required
 #          note: the order of ports has to be the same in both arrays, e.g. port1 is mapped to port1
 #
+function wait_for_vpn() {
+    # Now wait for the VPN servive to become ready
+    STATUS=$(docker ps --format '{{.Status}}' -f name=nordvpn)
+    while [[ ! "${STATUS}" =~ "(healthy)" ]] ; do
+        echo "Waiting for VPN to become ready"
+        sleep 5
+        STATUS=$(docker ps --format '{{.Status}}' -f name=nordvpn)
+    done
+    echo "VPN ready"
+}
+
 CMD=$1
 if [ -z "$CMD" ] ; then
     echo "No option specified, assuming BUILD"
@@ -29,20 +40,17 @@ esac
 source load_vars.sh
 
 if [ "$CMD" == "build" ] ; then
-    docker network create --subnet ${DOCKERNETWORK} --gateway ${DOCKERGATEWAY} --ipv6 mailnet
+    # Note MTU 1420 is from nordvpn nordlynx interface
+    docker network create --subnet ${DOCKERNETWORK} --gateway ${DOCKERGATEWAY} --ipv6 mailnet --opt com.docker.network.driver.mtu=1420
+    docker compose --parallel 1 up --build -d vpn
+    wait_for_vpn
     docker compose --parallel 1 up --build -d 
 else
-    docker compose up -d
+    docker compose up -d vpn
+    wait_for_vpn
+    docker compose up -d 
 fi
 
-# Now wait for the VPN servive to become ready
-STATUS=$(docker ps --format '{{.Status}}' -f name=nordvpn)
-echo $STATUS
-while [[ ! "${STATUS}" =~ "(healthy)" ]] ; do
-   echo "Waiting for VPN to become ready"
-   sleep 5
-   STATUS=$(docker ps --format '{{.Status}}' -f name=nordvpn)
-done
 
 # Hide containers behind vpn
 HIDDENCONTAINERS=$(docker ps --format '{{.Names}}' --filter "label=com.tgiesela.vpn.hiddenip=true")
@@ -78,3 +86,5 @@ for container in $BEHINDVPNCONTAINERS ; do
         docker exec nordvpn /forward.sh ${SRCPORT} ${container} ${DSTPORT}
     done
 done
+# Temporary solution until problem solved (iptables, fragmentation, MTU-size)
+# docker exec --privileged fetchmail ip link set dev eth0 mtu 1420
