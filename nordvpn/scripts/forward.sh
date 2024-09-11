@@ -33,5 +33,5 @@ fi
 #iptables -t nat -D POSTROUTING -p tcp -d ${TARGETIP} --dport ${DSTPORT} -j SNAT --to-source ${MYIP} > /dev/null 2>&1
 # (Re-) add the rules
 set -e
-iptables -t nat -A -i nordlynx PREROUTING -p tcp --dport ${SRCPORT} -j DNAT --to-destination ${TARGETIP}:${DSTPORT}
+iptables -t nat -A PREROUTING -i nordlynx -p tcp --dport ${SRCPORT} -j DNAT --to-destination ${TARGETIP}:${DSTPORT}
 iptables -t nat -A POSTROUTING -p tcp -d ${TARGETIP} --dport ${DSTPORT} -j SNAT --to-source ${MYIP}
