@@ -17,4 +17,6 @@ services:
         - ./dnsmasq.conf:/etc/dnsmasq.conf
       labels:
         - "com.tgiesela.vpn.hiddenip=true"
-
+        - "com.tgiesela.vpn.accessible=true"
+        - "com.tgiesela.vpn.containerport=53/tcp;53/udp"
+        - "com.tgiesela.vpn.vpnport=53/tcp;53/udp"

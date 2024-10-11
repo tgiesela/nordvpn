@@ -80,6 +80,8 @@ for container in $BEHINDVPNCONTAINERS ; do
        echo 'Length of vpnport array does not match length of containerport array'
        exit 1
     fi
+    # Ports must be in format port/udp, port/tcp, port 
+    # if not tcp/udp specified, tcp is assumed
     for ((i=0; i<${#SRCPORTARRAY[@]}; i++)); do
         SRCPORT=${SRCPORTARRAY[i]}
         DSTPORT=${DSTPORTARRAY[i]}

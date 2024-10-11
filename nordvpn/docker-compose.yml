@@ -21,6 +21,7 @@ services:
      - MESHLOCAL=${MESHLOCAL}
      - TOKEN=${TOKEN}
      - DOCKERNETWORK=${DOCKERNETWORK}
+     - NORDVPNNICKNAME=${NORDVPNNICKNAME}
     cap_add:
      - NET_ADMIN               # Required
      - NET_RAW                 # Required    networks:

@@ -97,7 +97,10 @@ echo "AWAKE: DAEMON ACTIVE!!"
     nordvpn status
     delDNSrules
     enableForwarding
-
+    if [ ! -z "$NORDVPNNICKNAME}" ] ; then
+        nordvpn mesh peer remove nickname ${NORDVPNNICKNAME}
+        nordvpn mesh set nickname ${NORDVPNNICKNAME}
+    fi
 
 #    tail -f /entrypoint.sh
     wait $!
