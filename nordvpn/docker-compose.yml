@@ -26,7 +26,7 @@ services:
      - NET_ADMIN               # Required
      - NET_RAW                 # Required    networks:
     volumes:
-     - ${SPOTWEBVOLUME}/spotweb:/config
+     - ${VPNVOLUME}:/var/lib/nordvpn/data/
     logging: *default-logging
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1  # 1: Recomended if using ipv4 only

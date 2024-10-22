@@ -4,3 +4,4 @@ export TOKEN=<your token from nordvpn to login manually>
 export OPENSSHUSER=linuxserver.io
 export OPENSSHPASSWORD=<yourpassword>
 export NORDVPNNICKNAME=<nickname>
+export VPNVOLUME=/path/to/nordvpn
