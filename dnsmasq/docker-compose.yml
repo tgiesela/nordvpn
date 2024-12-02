@@ -21,6 +21,7 @@ services:
          - NET_ADMIN
       logging: *default-logging
       depends_on: [vpn]
+      restart: on-failure:5
       volumes:
         - ./dnsmasq.conf:/etc/dnsmasq.conf
       labels:
